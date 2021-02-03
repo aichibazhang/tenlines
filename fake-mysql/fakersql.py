@@ -1,12 +1,16 @@
+import random
 import re
 
 import pymysql as pymysql
 from faker import Faker
 from faker.providers import BaseProvider
-import random
+
+from data.fake_data import FakeData
 
 
 # 根据sql随机生成一条想要的数据
+
+
 class sqlProvider(BaseProvider):
     def get_random_data(self, datas):
         return random.choice(datas)
@@ -109,8 +113,9 @@ if __name__ == '__main__':
     products = fakerSql.query_all(query_sql=query_product_sql)
     product = fakerSql.faker.get_random_data(products)
     insert_sql = fakerSql.generator_insert_python_code()['insert_sql']
+    faker = FakeData()
     fakerSql.cursor.execute(
-        insert_sql, ('0', product[0], product[1], product[2], product[3])
+        insert_sql, ('0', product[0], product[1], faker.generator_amt(digits=4), faker.generator_amt(digits=4))
     )
     fakerSql.db.commit()
     fakerSql.close()
